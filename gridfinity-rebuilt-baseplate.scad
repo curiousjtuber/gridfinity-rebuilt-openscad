@@ -10,6 +10,7 @@ include <src/core/standard.scad>
 use <src/core/gridfinity-rebuilt-utility.scad>
 use <src/core/gridfinity-rebuilt-holes.scad>
 use <src/helpers/generic-helpers.scad>
+use <hsw.scad>
 
 // ===== PARAMETERS ===== //
 
@@ -64,6 +65,37 @@ crush_ribs = true;
 chamfer_holes = true;
 
 hole_options = bundle_hole_options(refined_hole=false, magnet_hole=enable_magnet, screw_hole=false, crush_ribs=crush_ribs, chamfer=chamfer_holes, supportless=false);
+
+/* [HSW] */
+hsw_plugs = true;
+
+hsw_align = false;
+
+// distance from hsw insert hole and gridfinity center point
+// ex: 0, 20.44
+hsw_align_offset = 0.0; // 0.01
+
+// ex: 0, 2.5, 3, 5, 6, 10, ...
+hsw_align_n_grid = 0.0; // 0.5
+
+hsw_plug_tolerance = 8.0; // 0.1
+
+hsw_tip_length = 1.5; // 0.1
+hsw_tip_diff = 0.2; // 0.01
+
+// positive: snug, negative: tight
+hsw_clearance_diff = 0.0; // 0.01
+
+if (hsw_plugs) {
+    hswPlugArray(gridx, gridy, 
+        align = hsw_align,
+        align_offset = hsw_align_offset,
+        align_n_grid = hsw_align_n_grid,
+        plug_tolerance = hsw_plug_tolerance,
+        clearance_diff = hsw_clearance_diff,
+        tip_length = hsw_tip_length, 
+        tip_diff = hsw_tip_diff);
+}
 
 // ===== IMPLEMENTATION ===== //
 
