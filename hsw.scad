@@ -48,8 +48,8 @@ module hswPlugArray(
     centered_start_x = - (gridx-1) * H_DISTANCE / 2;
 
     offset = align_offset + align_n_grid * L_GRID % H_DISTANCE;
-    //echo(str("offset: ", offset));
-    align_start_x = base_start_x + offset;
+    echo(str("offset: ", offset));
+    align_start_x = base_start_x - offset + H_DISTANCE;
     
     start_x = align ? align_start_x : centered_start_x;
     //echo(str("start_x: ", start_x));
@@ -82,5 +82,5 @@ module hswPlugArray(
 //}
 //color("red") testPlugArray(false);
 //color("blue") testPlugArray(true);
-//
-//undef testArray;
+
+
