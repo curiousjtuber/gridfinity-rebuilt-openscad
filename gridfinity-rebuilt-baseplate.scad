@@ -71,6 +71,8 @@ hsw_plugs = true;
 
 hsw_align = false;
 
+hsw_align_rtl = false;
+
 // distance from hsw insert hole and gridfinity center point
 // ex: 0, 20.44
 hsw_align_offset = 0.0; // 0.01
@@ -89,6 +91,7 @@ hsw_clearance_diff = 0.0; // 0.01
 if (hsw_plugs) {
     hswPlugArray(gridx, gridy, 
         align = hsw_align,
+        align_rtl = hsw_align_rtl,
         align_offset = hsw_align_offset,
         align_n_grid = hsw_align_n_grid,
         plug_tolerance = hsw_plug_tolerance,
