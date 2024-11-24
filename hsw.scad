@@ -1,4 +1,15 @@
 
+clearance_diff = 0.0; // 0.01
+tip_length = 1.5; // 0.1
+tip_diff = 0.2; // 0.01
+hook_length = 30;
+hook_height = 10;
+stopper_height = 1.5; // 0.1
+
+top_diff = 1.0; // 0.1
+
+/* [Hidden] */
+
 L_GRID = 42.0;
 
 // height: 13.4 - 0.3
@@ -14,12 +25,14 @@ module hswPlug(
     clearance_diff = 0.0,
     tip_length = 1.5,
     tip_diff = 0.2,
+    height = STANDARD_HEIGHT,
+    length = PLUG_LENGTH,
     align_rtl = false
 ) {
-    hsw_h = STANDARD_HEIGHT - clearance_diff;
-    r = hsw_h/2/cos(30);
+    hsw_h = height - clearance_diff;
     z = hsw_h/2;
-    main_length = PLUG_LENGTH - tip_length;
+    r = z/cos(30);
+    main_length = length - tip_length;
     rotate_angle = align_rtl ? 90: -90;
     translate([0, 0, z])
     rotate([rotate_angle, 0, 0]) {
@@ -29,6 +42,90 @@ module hswPlug(
     }
 
 }
+
+module bendingPart(
+    radius
+) {
+    rotate_extrude(angle=90) {
+        translate([radius,0, 0])
+        rotate([0, 0, 90])
+        circle(r = radius, $fn=6);
+    }
+}
+
+
+module hswHook(
+    clearance_diff = 0.0,
+    tip_length = 1.5,
+    tip_diff = 0.2,
+    stopper_height = 0.5,
+    hook_length = 30,
+    hook_height = 10,
+    top_diff = 2.0
+){
+    hsw_h = STANDARD_HEIGHT - clearance_diff;
+    z = hsw_h/2;
+    r = z/cos(30);
+    translate([0, -r, 0])
+    hswPlug(
+        clearance_diff = clearance_diff,
+        tip_length = tip_length,
+        tip_diff = tip_diff,
+        length = PLUG_LENGTH + hook_length + r
+    );
+    
+
+    
+    // insert stopper
+    l = r*sin(30);
+    stopper_points = [
+        [-l, 0, 0], 
+        [-l+stopper_height, 0, stopper_height],
+        [l-stopper_height, 0, stopper_height],
+        [l, 0, 0],
+        [l, -stopper_height, 0],
+        [-l, -stopper_height, 0]
+    ];
+    stopper_faces = [[0, 3, 2, 1], [0, 5, 4, 3], [0,1,5], [2,3,4], [1,2,4,5]];
+    translate([0, hook_length, hsw_h])
+    polyhedron(points = stopper_points, faces = stopper_faces);
+
+
+    // hook top
+    translate([0, -r, z])
+    cylinder(h = hook_height+r-top_diff, r=r, $fn=6);
+    translate([0, -r, z + hook_height+r-top_diff])
+    cylinder(h = top_diff, r1 = r, r2 = r-top_diff, $fn=6);
+    
+    // connecting parts
+    intersection() {
+        translate([0, -r-z, 0])
+        hswPlug(
+            clearance_diff = clearance_diff,
+            tip_length = 0,
+            tip_diff = 0,
+            length = PLUG_LENGTH + hook_length + r + z
+        );
+        translate([0, -r, 0])
+        cylinder(h = hook_height+r+z, r=r, $fn=6);
+        
+        translate([-20, 0, r+z])
+        rotate([0,90,0])
+        cylinder(h = r+z+40, r = 18);
+    }
+}
+
+hswHook(
+    clearance_diff = clearance_diff,
+    tip_length = tip_length,
+    tip_diff = tip_diff,
+    stopper_height = stopper_height,
+    hook_length = hook_length,
+    hook_height = hook_height,
+    top_diff = top_diff
+);
+
+
 
 module hswPlugArray(
     gridx, gridy, 
