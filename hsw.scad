@@ -1,9 +1,18 @@
 
+dual_hook = false;
+dual_distance = 10;
+dual_base = 5;
+dual_width = 5;
+dual_height = 10;
+
+
+hook_length = 30;
+hook_height = 10;
+
 clearance_diff = 0.0; // 0.01
 tip_length = 1.5; // 0.1
 tip_diff = 0.2; // 0.01
-hook_length = 30;
-hook_height = 10;
+
 stopper_height = 1.5; // 0.1
 
 top_diff = 1.0; // 0.1
@@ -43,9 +52,7 @@ module hswPlug(
 
 }
 
-module bendingPart(
-    radius
-) {
+module bendingPart(radius) {
     rotate_extrude(angle=90) {
         translate([radius,0, 0])
         rotate([0, 0, 90])
@@ -115,16 +122,77 @@ module hswHook(
     }
 }
 
-hswHook(
-    clearance_diff = clearance_diff,
-    tip_length = tip_length,
-    tip_diff = tip_diff,
-    stopper_height = stopper_height,
-    hook_length = hook_length,
-    hook_height = hook_height,
-    top_diff = top_diff
-);
+module hswDualHook(
+    dual_distance = 10.0,
+    dual_base = 5.0,
+    dual_width = 5.0,
+    dual_height = 10.0,
+    clearance_diff = 0.0,
+    tip_length = 1.5,
+    tip_diff = 0.2,
+    stopper_height = 0.5,
+    hook_length = 30,
+    hook_height = 10,
+    top_diff = 2.0
+){
+    hsw_h = STANDARD_HEIGHT - clearance_diff;
+    z = hsw_h/2;
+    r = z/cos(30);
 
+    hswPlug(
+        clearance_diff = clearance_diff,
+        tip_length = tip_length,
+        tip_diff = tip_diff,
+        length = PLUG_LENGTH
+    );
+    
+    // base
+    dual_base_width = dual_width*2+dual_distance;
+    
+    translate([-dual_base_width/2, -dual_base, 0])
+    cube([dual_base_width, dual_base, dual_height]);
+    
+    // hook
+    translate([dual_distance/2, -hook_length-dual_base,0])
+    cube([dual_width, hook_length, dual_height]);
+    
+    translate([-dual_width-dual_distance/2, -hook_length-dual_base,0])
+    cube([dual_width, hook_length, dual_height]);
+    
+    // top
+    translate([dual_distance/2, -hook_length-dual_base-dual_height, 0])
+    cube([dual_width, dual_height, dual_height+hook_height]);
+    
+    translate([-dual_width-dual_distance/2, -hook_length-dual_base-dual_height, 0])
+    cube([dual_width, dual_height, dual_height+hook_height]);
+}
+
+
+if (dual_hook) {
+    hswDualHook(
+        dual_distance = dual_distance,
+        dual_base = dual_base,
+        dual_width = dual_width,
+        dual_height = dual_height,
+        clearance_diff = clearance_diff,
+        tip_length = tip_length,
+        tip_diff = tip_diff,
+        stopper_height = stopper_height,
+        hook_length = hook_length,
+        hook_height = hook_height,
+        top_diff = top_diff
+    );
+} else {
+    hswHook(
+        clearance_diff = clearance_diff,
+        tip_length = tip_length,
+        tip_diff = tip_diff,
+        stopper_height = stopper_height,
+        hook_length = hook_length,
+        hook_height = hook_height,
+        top_diff = top_diff
+    );
+}
 
 
 module hswPlugArray(
