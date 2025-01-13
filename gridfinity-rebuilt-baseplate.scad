@@ -74,7 +74,7 @@ hsw_align = false;
 hsw_align_rtl = false;
 
 // distance from hsw insert hole and gridfinity center point
-// ex: 0, 20.44
+// ex: 0, 20.44, 27.25(40.88-13.63), 47.69(27.25+20.44)
 hsw_align_offset = 0.0; // 0.01
 
 // ex: 0, 2.5, 3, 5, 6, 10, ...
